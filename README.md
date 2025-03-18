@@ -141,4 +141,4 @@ This project uses Weaviate vector database. For usage:
 
 ## Contact
 
-Project link: [https://github.com/cagatayturkann/personalChatbot](https://github.com/cagatayturkann/personalChatbot)
+Project link: [https://personal-chatbot-nine.vercel.app/](https://personal-chatbot-nine.vercel.app/)
