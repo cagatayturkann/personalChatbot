@@ -1,14 +1,14 @@
 const Conversation = require('../models/Conversation');
 
 /**
- * Yeni bir konuşma oluşturur
- * @param {String} title - Konuşma başlığı (opsiyonel)
- * @returns {Promise<Object>} - Oluşturulan konuşma
+ * Creates a new conversation
+ * @param {String} title - Conversation title (optional)
+ * @returns {Promise<Object>} - Created conversation
  */
 const createConversation = async (title = null) => {
   try {
-    // Eğer title null ise, varsayılan değer ata
-    const conversationTitle = title || 'Yeni Konuşma';
+    // Assign default value if title is null
+    const conversationTitle = title || 'New Conversation';
     
     const conversation = new Conversation({
       title: conversationTitle,
@@ -24,9 +24,9 @@ const createConversation = async (title = null) => {
 };
 
 /**
- * ID'ye göre bir konuşmayı getirir
- * @param {String} conversationId - Konuşma ID
- * @returns {Promise<Object>} - Bulunan konuşma
+ * Gets a conversation by ID
+ * @param {String} conversationId - Conversation ID
+ * @returns {Promise<Object>} - Found conversation
  */
 const getConversationById = async (conversationId) => {
   try {
@@ -42,8 +42,8 @@ const getConversationById = async (conversationId) => {
 };
 
 /**
- * Tüm konuşmaları getirir
- * @returns {Promise<Array>} - Konuşmalar dizisi
+ * Gets all conversations
+ * @returns {Promise<Array>} - Array of conversations
  */
 const getAllConversations = async () => {
   try {
@@ -57,11 +57,35 @@ const getAllConversations = async () => {
 };
 
 /**
- * Bir konuşmaya yeni mesaj ekler
- * @param {String} conversationId - Konuşma ID
- * @param {String} role - Mesaj rolü ('user' veya 'assistant')
- * @param {String} content - Mesaj içeriği
- * @returns {Promise<Object>} - Güncellenen konuşma
+ * Gets the last messages of a conversation up to a limit
+ * @param {String} conversationId - Conversation ID
+ * @param {Number} limit - Maximum number of messages to retrieve
+ * @returns {Promise<Array>} - Array of messages
+ */
+const getConversationMessages = async (conversationId, limit = 10) => {
+  try {
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      throw new Error('Conversation not found');
+    }
+    
+    // Get the last "limit" messages
+    const messages = conversation.messages;
+    const startIdx = Math.max(0, messages.length - limit);
+    
+    return messages.slice(startIdx);
+  } catch (error) {
+    console.error('Error getting conversation messages:', error);
+    throw error;
+  }
+};
+
+/**
+ * Adds a new message to a conversation
+ * @param {String} conversationId - Conversation ID
+ * @param {String} role - Message role ('user' or 'assistant')
+ * @param {String} content - Message content
+ * @returns {Promise<Object>} - Updated conversation
  */
 const addMessageToConversation = async (conversationId, role, content) => {
   try {
@@ -85,9 +109,9 @@ const addMessageToConversation = async (conversationId, role, content) => {
 };
 
 /**
- * Bir konuşmayı siler
- * @param {String} conversationId - Konuşma ID
- * @returns {Promise<Boolean>} - İşlem başarılı ise true
+ * Deletes a conversation
+ * @param {String} conversationId - Conversation ID
+ * @returns {Promise<Boolean>} - True if operation is successful
  */
 const deleteConversation = async (conversationId) => {
   try {
@@ -106,6 +130,7 @@ module.exports = {
   createConversation,
   getConversationById,
   getAllConversations,
+  getConversationMessages,
   addMessageToConversation,
   deleteConversation
 }; 

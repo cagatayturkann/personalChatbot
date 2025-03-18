@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Message şeması - Conversation içinde gömülü olarak kullanılacak
+// Message schema - Used embedded within Conversation
 const messageSchema = new mongoose.Schema({
   role: {
     type: String,
@@ -17,13 +17,13 @@ const messageSchema = new mongoose.Schema({
   }
 });
 
-// Conversation şeması
+// Conversation schema
 const conversationSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true // Artık required olarak işaretliyoruz, çünkü servis tarafında değer atıyoruz
+    required: true // Marked as required since we assign a value in the service
   },
-  messages: [messageSchema], // Mesajlar dizisi
+  messages: [messageSchema], // Array of messages
   createdAt: {
     type: Date,
     default: Date.now
@@ -32,15 +32,15 @@ const conversationSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-}, { versionKey: false }); // versionKey'i devre dışı bırak
+}, { versionKey: false }); // Disable versionKey
 
-// Bir mesaj eklendiğinde updatedAt alanını güncelle
+// Update updatedAt field when a message is added
 conversationSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   
-  // İlk mesaj eklendiğinde title'ı güncelle
-  if (this.isModified('messages') && this.messages.length > 0 && this.title === 'Yeni Konuşma') {
-    // İlk kullanıcı mesajını title olarak kullan (maksimum 30 karakter)
+  // Update title when the first message is added
+  if (this.isModified('messages') && this.messages.length > 0 && this.title === 'New Conversation') {
+    // Use the first user message as title (maximum 30 characters)
     const userMessages = this.messages.filter(msg => msg.role === 'user');
     if (userMessages.length > 0) {
       const firstUserMessage = userMessages[0].content;

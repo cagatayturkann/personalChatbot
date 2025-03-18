@@ -1,73 +1,64 @@
-const axios = require('axios');
 const conversationService = require('../services/conversationService');
+const aiService = require('../services/aiService');
+const vectorService = require('../services/vectorService');
+const { translatorAgent } = require('../controllers/agentController');
 
 /**
- * Chat mesajını işler ve yanıt döndürür
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Process chat message and return response
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const processChat = async (req, res) => {
   try {
-    const { message, imageUrl, conversationId } = req.body;
+    const { message, conversationId } = req.body;
     let conversation;
-    
-    // Eğer conversationId yoksa, yeni bir konuşma oluştur
+
+    // Create a new conversation if conversationId doesn't exist
     if (!conversationId) {
-      // İlk mesajı title olarak kullan (maksimum 30 karakter)
+      // Use first message as title (maximum 30 characters)
       const title = message.length > 30 ? message.substring(0, 30) + '...' : message;
       conversation = await conversationService.createConversation(title);
     } else {
-      // Var olan konuşmayı getir
+      // Get existing conversation
       try {
         conversation = await conversationService.getConversationById(conversationId);
       } catch (error) {
-        // Konuşma bulunamazsa yeni bir tane oluştur
-        // İlk mesajı title olarak kullan (maksimum 30 karakter)
+        // Create a new conversation if the existing one can't be found
         const title = message.length > 30 ? message.substring(0, 30) + '...' : message;
         conversation = await conversationService.createConversation(title);
       }
     }
-    
-    // Kullanıcı mesajını konuşmaya ekle
+
+    // Add user message to conversation
     await conversationService.addMessageToConversation(conversation._id, 'user', message);
 
-    // Mesaj içeriğini hazırla
-    let messageContent = message;
+    // Retrieve relevant information from vector database
+    let vectorInfo = [];
+    try {
+      const translatedMessage = await translatorAgent(message);
+      console.log(`Translated message: ${translatedMessage}`);
+      vectorInfo = await vectorService.getVectorInfo(translatedMessage);
+      console.log(`Vector info retrieved: ${vectorInfo.length} items`);
+    } catch (vectorError) {
+      console.error('Vector search error:', vectorError);
+      // Continue even if vector search fails
+    }
 
-    const response = await axios({
-      method: 'post',
-      url: 'https://openrouter.ai/api/v1/chat/completions',
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': process.env.SITE_URL || 'http://localhost:3000',
-        'X-Title': 'AI Chatbot',
-      },
-      data: {
-        model: 'google/gemini-2.0-flash-001',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a helpful AI shopping assistant and personal assistant for Çağatay Türkan. 
-            You can answer questions about shopping related topics and about Çağatay's projects, and experience.
-            For other topics, be helpful and friendly. If you don't know the answer, say so politely.`,
-          },
-          {
-            role: 'user',
-            content: messageContent,
-          },
-        ],
-      },
-    });
+    // Use vector search results as context if available
+    let context = '';
+    if (vectorInfo && vectorInfo.length > 0) {
+      context = JSON.stringify(vectorInfo);
+    }
 
-    const assistantResponse = response.data.choices[0].message.content;
-    
-    // Bot yanıtını konuşmaya ekle
+    // Generate response using Gemini API (with vector information as context if available)
+    const assistantResponse = await aiService.generateGeminiResponse(message, context);
+
+    // Add bot response to conversation
     await conversationService.addMessageToConversation(conversation._id, 'assistant', assistantResponse);
 
     res.json({
       response: assistantResponse,
-      conversationId: conversation._id
+      conversationId: conversation._id,
     });
   } catch (error) {
     console.error('Error:', error.message);
@@ -78,5 +69,5 @@ const processChat = async (req, res) => {
 };
 
 module.exports = {
-  processChat
-}; 
+  processChat,
+};

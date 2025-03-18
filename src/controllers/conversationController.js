@@ -1,9 +1,9 @@
 const conversationService = require('../services/conversationService');
 
 /**
- * Yeni bir konuşma oluşturur
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Creates a new conversation
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const createConversation = async (req, res) => {
   try {
@@ -17,9 +17,9 @@ const createConversation = async (req, res) => {
 };
 
 /**
- * Bir konuşmayı ID'ye göre getirir
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Gets a conversation by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const getConversationById = async (req, res) => {
   try {
@@ -32,9 +32,9 @@ const getConversationById = async (req, res) => {
 };
 
 /**
- * Bir konuşmanın mesajlarını getirir
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Gets messages from a conversation
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const getConversationMessages = async (req, res) => {
   try {
@@ -47,9 +47,9 @@ const getConversationMessages = async (req, res) => {
 };
 
 /**
- * Tüm konuşmaları getirir
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Gets all conversations
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const getAllConversations = async (req, res) => {
   try {
@@ -62,9 +62,9 @@ const getAllConversations = async (req, res) => {
 };
 
 /**
- * Bir konuşmayı siler
- * @param {Object} req - Express request nesnesi
- * @param {Object} res - Express response nesnesi
+ * Deletes a conversation
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 const deleteConversation = async (req, res) => {
   try {

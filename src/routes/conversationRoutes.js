@@ -2,19 +2,19 @@ const express = require('express');
 const router = express.Router();
 const conversationController = require('../controllers/conversationController');
 
-// Tüm konuşmaları getir
+// Get all conversations
 router.get('/', conversationController.getAllConversations);
 
-// Yeni bir konuşma oluştur
+// Create a new conversation
 router.post('/', conversationController.createConversation);
 
-// Bir konuşmayı ID'ye göre getir
+// Get a conversation by ID
 router.get('/:id', conversationController.getConversationById);
 
-// Bir konuşmanın mesajlarını getir
+// Get messages from a conversation
 router.get('/:id/messages', conversationController.getConversationMessages);
 
-// Bir konuşmayı sil
+// Delete a conversation
 router.delete('/:id', conversationController.deleteConversation);
 
 module.exports = router; 
