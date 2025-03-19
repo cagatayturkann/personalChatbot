@@ -43,18 +43,43 @@ app.use(cors({
       callback(new Error('CORS policy violation: Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'DELETE'],
+  credentials: true,
+  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Origin/Referrer kontrolü middleware'i
+// OPTIONS pre-flight için özel CORS yanıtları
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  
+  // İzin verilen originler listesinde mi kontrol et
+  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.status(200).send();
+  } else {
+    res.status(403).send();
+  }
+});
+
+// Her istekte CORS başlıklarını kontrol et ve ekle
 app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
   // Geliştirme ortamında kontrolü atla
   if (isDevelopment) {
     return next();
   }
   
-  const origin = req.headers.origin;
   const referer = req.headers.referer;
   
   // API istekleri için origin kontrolü
