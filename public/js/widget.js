@@ -602,10 +602,8 @@ const PORT = window.PORT || '3000';
                 const response = await fetch(`${SITE_URL}/api/chat`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    mode: 'cors',
-                    credentials: 'same-origin',
                     body: JSON.stringify({ 
                         message,
                         conversationId // Eğer null ise, backend yeni bir conversation oluşturacak

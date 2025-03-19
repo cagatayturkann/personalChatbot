@@ -32,78 +32,21 @@ const allowedOrigins = [
 
 // CORS ayarları
 app.use(cors({
-  origin: function(origin, callback) {
-    // Geliştirme ortamında veya origin yoksa izin ver
-    if (isDevelopment || !origin) {
-      callback(null, true);
-    } 
-    // İzin verilen originler listesindeyse izin ver
-    else if (allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS policy violation: Not allowed by CORS'));
-    }
-  },
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// OPTIONS pre-flight için özel CORS yanıtları
-app.options('*', (req, res) => {
-  const origin = req.headers.origin;
-  
-  // İzin verilen originler listesinde mi kontrol et
-  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.status(200).send();
-  } else {
-    res.status(403).send();
-  }
-});
-
-// Her istekte CORS başlıklarını kontrol et ve ekle
+// Her istekte CORS başlıklarını ekle
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
-  if (origin && allowedOrigins.some(allowed => origin.startsWith(allowed))) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-  
-  // Geliştirme ortamında kontrolü atla
-  if (isDevelopment) {
-    return next();
-  }
-  
-  const referer = req.headers.referer;
-  
-  // API istekleri için origin kontrolü
-  if (req.path.startsWith('/api/')) {
-    // Origin yoksa ve referer yoksa (doğrudan API çağrısı)
-    if (!origin && !referer) {
-      return res.status(403).json({ error: 'Unauthorized: Direct API access not allowed' });
-    }
-    
-    // Origin veya referer'ın izin verilen domainlerden olup olmadığını kontrol et
-    let isAllowed = false;
-    
-    if (origin) {
-      isAllowed = allowedOrigins.some(allowed => origin.startsWith(allowed));
-    }
-    
-    if (!isAllowed && referer) {
-      isAllowed = allowedOrigins.some(allowed => referer.startsWith(allowed));
-    }
-    
-    if (!isAllowed) {
-      return res.status(403).json({ error: 'Unauthorized: Domain not allowed' });
-    }
+  // OPTIONS isteklerine hemen yanıt ver
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
   
   next();
