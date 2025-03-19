@@ -337,7 +337,7 @@ const PORT = window.PORT || '3000';
             <div class="chat-container collapsed">
                 <div class="chat-header">
                     <div style="display: flex; align-items: center;">
-                        <img src="${SITE_URL}:${PORT}/img/my-profile-img.jpg" alt="Assistant" class="header-avatar">
+                        <img src="${SITE_URL}/img/my-profile-img.jpg" alt="Assistant" class="header-avatar">
                         <h3>ChaCha[Çaça]</h3>
                     </div>
                     <div class="header-actions">
