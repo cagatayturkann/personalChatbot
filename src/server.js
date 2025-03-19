@@ -26,7 +26,8 @@ const allowedOrigins = [
   'http://127.0.0.1:5500',  // VS Code Live Server
   'https://cagatayturkan.com',
   'https://www.cagatayturkan.com',
-  'https://cagatayturkann.github.io'
+  'https://cagatayturkann.github.io',
+  'https://personal-chatbot-nine.vercel.app'
 ];
 
 // CORS ayarları
