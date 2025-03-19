@@ -432,7 +432,7 @@ const PORT = window.PORT || '3000';
                 const loadingMessage = addLoadingMessage();
                 
                 // Konuşma mesajlarını API'den al
-                const response = await fetch(`${SITE_URL}:${PORT}/api/conversations/${id}/messages`);
+                const response = await fetch(`${SITE_URL}/api/conversations/${id}/messages`);
                 
                 if (response.ok) {
                     const messages = await response.json();
@@ -461,7 +461,7 @@ const PORT = window.PORT || '3000';
                             
                             if (senderType === 'bot') {
                                 const avatarImg = document.createElement('img');
-                                avatarImg.src = `${SITE_URL}:${PORT}/img/my-profile-img.jpg`;
+                                avatarImg.src = `${SITE_URL}/img/my-profile-img.jpg`;
                                 avatarImg.alt = 'Bot Avatar';
                                 avatarDiv.appendChild(avatarImg);
                             } else {
@@ -599,7 +599,7 @@ const PORT = window.PORT || '3000';
 
             try {
                 // API endpoint'i - bu kısmı kendi API'nize göre değiştirin
-                const response = await fetch(`${SITE_URL}:${PORT}/api/chat`, {
+                const response = await fetch(`${SITE_URL}/api/chat`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -645,7 +645,7 @@ const PORT = window.PORT || '3000';
             
             if (sender === 'bot') {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = `${SITE_URL}:${PORT}/img/my-profile-img.jpg` ;
+                avatarImg.src = `${SITE_URL}/img/my-profile-img.jpg` ;
                 avatarImg.alt = 'Bot Avatar';
                 avatarDiv.appendChild(avatarImg);
             } else {
@@ -726,7 +726,7 @@ const PORT = window.PORT || '3000';
             const avatarDiv = document.createElement('div');
             avatarDiv.className = 'message-avatar';
             const avatarImg = document.createElement('img');
-            avatarImg.src = `${SITE_URL}:${PORT}/img/my-profile-img.jpg`;
+            avatarImg.src = `${SITE_URL}/img/my-profile-img.jpg`;
             avatarImg.alt = 'Bot Avatar';
             avatarDiv.appendChild(avatarImg);
             messageDiv.appendChild(avatarDiv);
