@@ -55,6 +55,15 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
+// API status endpoint
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'API is working properly',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API routes
 app.use(routes);
 
