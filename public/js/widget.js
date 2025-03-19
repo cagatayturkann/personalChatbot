@@ -605,7 +605,7 @@ const PORT = window.PORT || '3000';
                         'Content-Type': 'application/json',
                     },
                     mode: 'cors',
-                    credentials: 'include',
+                    credentials: 'same-origin',
                     body: JSON.stringify({ 
                         message,
                         conversationId // Eğer null ise, backend yeni bir conversation oluşturacak
