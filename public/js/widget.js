@@ -5,7 +5,7 @@
 // dotenv konfigürasyonu
 // Client-side JavaScript'te require() kullanılamaz
 // Environment variables'ları backend'den almalı veya doğrudan tanımlamalıyız
-const SITE_URL = window.SITE_URL || 'http://localhost'; 
+const SITE_URL = window.SITE_URL || 'https://personal-chatbot-nine.vercel.app/' || 'http://localhost'; 
 const PORT = window.PORT || '3000';
 
 
